@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simuladores Financieros</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .contenedor {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .simulador {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-top: 5px solid #0b4d1e;
+    }
+
+    .simulador h2 {
+      color: #0b4d1e;
+      margin-top: 0;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #0b4d1e;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0a3e18;
+    }
+
+    .resultado {
+      margin-top: 20px;
+      font-size: 1.1em;
+      background-color: #f6fff6;
+      padding: 15px;
+      border-radius: 6px;
+      border: 1px solid #c8e6c9;
+      color: #1b5e20;
+    }
+
+    @media (max-width: 600px) {
+      .contenedor {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contenedor">
+    <!-- Simulador de Crédito -->
+    <div class="simulador">
+      <h2>Simulador de Crédito</h2>
+
+      <label for="montoCredito">Monto del crédito (COP):</label>
+      <input type="number" id="montoCredito" placeholder="Ej: 10000000" />
+
+      <label for="tasaCredito">Tasa de interés anual (%):</label>
+      <input type="number" id="tasaCredito" placeholder="Ej: 20" />
+
+      <label for="plazoCredito">Plazo en meses:</label>
+      <input type="number" id="plazoCredito" placeholder="Ej: 24" />
+
+      <button onclick="calcularCredito()">Calcular Crédito</button>
+
+      <div class="resultado" id="resultadoCredito"></div>
+    </div>
+
+    <!-- Simulador de Inversión -->
+    <div class="simulador">
+      <h2>Simulador de Inversión</h2>
+
+      <label for="montoInversion">Monto a invertir (COP):</label>
+      <input type="number" id="montoInversion" placeholder="Ej: 5000000" />
+
+      <label for="tasaInversion">Tasa de interés anual (%):</label>
+      <input type="number" id="tasaInversion" placeholder="Ej: 10" />
+
+      <label for="plazoInversion">Tiempo en meses:</label>
+      <input type="number" id="plazoInversion" placeholder="Ej: 12" />
+
+      <label for="tipoInteres">Tipo de interés:</label>
+      <select id="tipoInteres">
+        <option value="simple">Simple</option>
+        <option value="compuesto">Compuesto</option>
+      </select>
+
+      <button onclick="calcularInversion()">Calcular Inversión</button>
+
+      <div class="resultado" id="resultadoInversion"></div>
+    </div>
+  </div>
+
+  <script>
+    function calcularCredito() {
+      const monto = parseFloat(document.getElementById("montoCredito").value);
+      const tasaAnual = parseFloat(document.getElementById("tasaCredito").value);
+      const plazo = parseInt(document.getElementById("plazoCredito").value);
+
+      if (!monto || !tasaAnual || !plazo) {
+        document.getElementById("resultadoCredito").innerText = "Por favor completa todos los campos.";
+        return;
+      }
+
+      const tasaMensual = tasaAnual / 100 / 12;
+      const cuota = (monto * tasaMensual) / (1 - Math.pow(1 + tasaMensual, -plazo));
+      const total = cuota * plazo;
+
+      document.getElementById("resultadoCredito").innerHTML = `
+        Cuota mensual estimada: <strong>$${cuota.toFixed(0).toLocaleString("es-CO")}</strong><br>
+        Total a pagar: <strong>$${total.toFixed(0).toLocaleString("es-CO")}</strong>
+      `;
+    }
+
+    function calcularInversion() {
+      const monto = parseFloat(document.getElementById("montoInversion").value);
+      const tasaAnual = parseFloat(document.getElementById("tasaInversion").value);
+      const plazo = parseInt(document.getElementById("plazoInversion").value);
+      const tipo = document.getElementById("tipoInteres").value;
+
+      if (!monto || !tasaAnual || !plazo) {
+        document.getElementById("resultadoInversion").innerText = "Por favor completa todos los campos.";
+        return;
+      }
+
+      const tasaMensual = tasaAnual / 100 / 12;
+      let total;
+
+      if (tipo === "simple") {
+        total = monto * (1 + tasaMensual * plazo);
+      } else {
+        total = monto * Math.pow(1 + tasaMensual, plazo);
+      }
+
+      const ganancia = total - monto;
+
+      document.getElementById("resultadoInversion").innerHTML = `
+        Total proyectado: <strong>$${total.toFixed(0).toLocaleString("es-CO")}</strong><br>
+        Ganancia estimada: <strong>$${ganancia.toFixed(0).toLocaleString("es-CO")}</strong>
+      `;
+    }
+  </script>
+
+</body>
+</html>
